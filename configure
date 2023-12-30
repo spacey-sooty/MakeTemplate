@@ -1,0 +1,55 @@
+#!/usr/bin/sh
+mkdir -p src
+mkdir -p scripts
+
+chmod -f -R +x scripts/*.pl
+chmod -f -R +x scripts/*.py
+chmod -f -R +x scripts/*.sh
+
+checkinstall() {
+    declare -a deps=(make perl)
+
+    for i in "${deps[@]}"; do
+        $i -v
+        if [ ! $? -eq 0 ]; then
+            echo "$i isn't installed properly"
+            exit 1
+        fi
+    done
+    echo "All dependencies are installed succesfully"
+    exit 0
+}
+
+case $1 in
+    "apt" )
+        echo "Installing for Debian/Ubuntu base"
+        sudo apt update -y
+        sudo apt install perl make -y
+        checkinstall
+        if [ ! $? -eq 0 ]; then
+            echo "Dependencies didn't install properly"
+            exit 1
+        fi
+        ;;
+    "dnf" )
+        echo "Installing for Fedora/RHEL base"
+        sudo dnf update -y
+        sudo dnf install perl -y
+        sudo dnf install autmake -y
+        checkinstall
+        if [ ! $? -eq 0 ]; then
+            echo "Dependencies didn't install properly"
+            exit 1
+        fi
+        ;;
+    * )
+        echo "Your OS isn't supported"
+        checkinstall
+        if [ $? -eq 0 ]; then
+            echo "You have everything installed either way its fine"
+            exit 0
+        fi
+        exit 1
+        ;;
+esac
+exit 0
