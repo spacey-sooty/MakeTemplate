@@ -35,7 +35,7 @@ case $1 in
         echo "Installing for Fedora/RHEL base"
         sudo dnf update -y
         sudo dnf install perl -y
-        sudo dnf install autmake -y
+        sudo dnf install automake -y
         checkinstall
         if [ ! $? -eq 0 ]; then
             echo "Dependencies didn't install properly"
